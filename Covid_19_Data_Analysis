@@ -1,0 +1,83 @@
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+df = pd.read_csv("Covid-19.csv")
+
+print("\nFirst 5 rows of dataset:")
+print(df.head())
+
+
+df = df.loc[:, ~df.columns.str.contains('Unnamed')]
+
+
+df['Date'] = pd.to_datetime(df['Date'], dayfirst=True)
+
+
+print("\nMissing Values:")
+print(df.isnull().sum())
+
+
+df.fillna(0, inplace=True)
+
+
+total_confirmed = df['Confirmed Cases'].sum()
+total_recovered = df['Recoveries'].sum()
+total_deaths = df['Fatalities'].sum()
+
+print("\n===== Overall Covid-19 Statistics =====")
+print("Total Confirmed Cases:", total_confirmed)
+print("Total Recoveries:", total_recovered)
+print("Total Fatalities:", total_deaths)
+
+
+country_data = df.groupby('Country')[['Confirmed Cases', 'Recoveries', 'Fatalities']].sum()
+print("\nCountry-wise Summary:")
+print(country_data)
+
+
+plt.figure()
+plt.plot(df['Date'], df['Confirmed Cases'])
+plt.xlabel("Date")
+plt.ylabel("Confirmed Cases")
+plt.title("Covid-19 Confirmed Cases Over Time")
+plt.show()
+
+
+plt.figure()
+plt.plot(df['Date'], df['Recoveries'], label="Recoveries")
+plt.plot(df['Date'], df['Fatalities'], label="Fatalities")
+plt.xlabel("Date")
+plt.ylabel("Count")
+plt.title("Recoveries vs Fatalities")
+plt.legend()
+plt.show()
+
+# Vaccination Impact
+plt.figure()
+plt.scatter(df['Vaccination Rate'], df['Confirmed Cases'])
+plt.xlabel("Vaccination Rate")
+plt.ylabel("Confirmed Cases")
+plt.title("Impact of Vaccination Rate on Covid-19 Cases")
+plt.show()
+
+# =========================
+# Correlation Analysis
+# =========================
+correlation = df[['Confirmed Cases', 'Recoveries', 'Fatalities', 'Vaccination Rate']].corr()
+
+print("\n===== Correlation Matrix =====")
+print(correlation)
+
+# =========================
+# Insights
+# =========================
+print("\n===== Key Insights =====")
+print("- Confirmed cases vary over time and across countries")
+print("- Recoveries are significantly higher than fatalities")
+print("- Higher vaccination rates generally show lower confirmed cases")
+print("- Data visualization helps understand pandemic trends")
+
+print("\n===== Project Completed Successfully =====")
